@@ -1,0 +1,25 @@
+#/bin/bash
+
+. testinit CATEGORY
+
+################## create a new category
+RESULT=$(rest POST category 'data={"caption":"comics"}')
+assertHttpCode POST 201 || exit 1
+
+## it should return the category with its ID
+assertEquals "Caption" $(echo $RESULT | jshon -e caption -u ) "comics" || exit 1
+
+CATEGORY_ID=$(echo $RESULT | jshon -e categoryId -u ) || exit 1
+
+################## update 
+RESULT=$(rest PUT category 'data={"categoryId":'$CATEGORY_ID',"caption":"art"}')
+assertHttpCode PUT 200 || exit 1
+
+## we should have the same category returned, with the same ID, but a different name
+assertEquals "New caption" $(echo $RESULT | jshon -e caption -u) "art" || exit 1
+assertEquals "Same Id" $(echo $RESULT | jshon -e categoryId -u) "$CATEGORY_ID" || exit 1
+
+################## delete 
+RESULT=$(rest DELETE category 'data={"categoryId":'$CATEGORY_ID'}')
+assertHttpCode DELETE 200 || exit 1
+

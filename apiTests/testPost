@@ -1,0 +1,26 @@
+#/bin/bash
+
+. testinit POST
+
+POST_ID=$(echo "select userPostId from userPost, post, user where post.externalId = 'testPost' and userPost.postId = post.postId and userPost.userId = user.userId and user.login = 'test';" | mysql --user=feedlr --password=feedlr --database=feedlr | tail -1)
+
+################## get a specified Post
+RESULT=$(rest GET post "postId=$POST_ID")
+assertHttpCode GET 200 || exit 1
+
+## it should return this URL (see init.sql)
+assertEquals "Link" $(echo $RESULT | jshon -e link -u ) "http://www.pcinpact.com/news/72276-ufc-que-choisir-reaction-suite-a-annonce-indeminisation-dorange.htm" || exit 1
+## and the newly readed status
+assertEquals "Readed" $(echo $RESULT | jshon -e readed -u ) "0" || exit 1
+
+################## update the read status of a post
+RESULT=$(rest PUT post 'data={"postId":"'$POST_ID'", "readed":"1", "favourited":"0"}')
+assertHttpCode PUT 200 || exit 1
+
+## it should return this URL (see init.sql)
+assertEquals "Link" $(echo $RESULT | jshon -e link -u ) "http://www.pcinpact.com/news/72276-ufc-que-choisir-reaction-suite-a-annonce-indeminisation-dorange.htm" || exit 1
+## and the newly readed status
+assertEquals "Readed" $(echo $RESULT | jshon -e readed -u ) "1" || exit 1
+
+
+

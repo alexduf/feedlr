@@ -1,0 +1,64 @@
+#/bin/bash
+
+# to be sourced by other tests
+
+export FEEDLR_URL=http://localhost/feedlr.org/api/index.php?resource=
+export AUTH="Authorization: Basic dGVzdDp0ZXN0"
+export DB_USER=feedlr
+export DB_PASSWORD=feedlr
+export DB_NAME=feedlr
+
+function rest() {
+
+	URL="${FEEDLR_URL}${2}"
+	if [ -n "$3" ] ; then
+		if [ "$1" = "GET" ] ; then
+			URL="$URL&$3"
+			DATA=""
+		else
+			DATA_FILE=/tmp/tmp.curl.$$
+			echo $3 > $DATA_FILE
+			DATA="--data @${DATA_FILE}"
+		fi
+	fi	
+
+	# we download the whole response, header included, so we can come back
+	# later to get the http status
+	curl -i -s --request $1 -H "$AUTH" $DATA "$URL" > /tmp/curl.response
+
+	# but that means we must cut the header before printing it
+	awk 'BEGIN{data=0}{if(data==1) {print $0}}/^\r$/{data = 1}' /tmp/curl.response
+	
+}
+
+function assertHttpCode() {
+	R_CODE=$(head -1 /tmp/curl.response | cut -d ' ' -f 2)
+	if [ "$R_CODE" != "$2" ]; then
+		echo "*$1 HTTP CODE : FAIL ! expecting : $2 but is $R_CODE"
+		exit 1
+	else
+		echo "*$1 HTTP CODE : OK"
+	fi
+}
+
+function assertEquals() {
+	if [ "$2" != "$3" ]; then
+		echo "$1 : FAIL ! expecting : $3 but is $2"
+		exit 1
+	else
+		echo "$1 : OK"
+	fi
+}
+
+echo "=================="
+echo "TESTING $1"
+echo "=================="
+
+OUTPUT=$(mysql --user=$DB_USER --password=$DB_PASSWORD --database=$DB_NAME < init.sql)
+if [ $? -ne 0 ]; then
+	echo $OUTPUT
+	echo "DB INIT : FAIL !"
+	exit 1
+fi
+
+echo "DB INIT : OK"

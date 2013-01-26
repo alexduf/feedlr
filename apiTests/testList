@@ -1,0 +1,18 @@
+#/bin/bash
+
+. testinit LIST
+
+################## get the default list
+RESULT=$(rest GET list)
+assertHttpCode GET 200 || exit 1
+
+## we are supposed to have 5 unreaded posts
+assertEquals "NB of posts default" $(echo $RESULT | jshon -l) 5 || exit 1
+
+################## get the list, with already readed ones
+RESULT=$(rest GET list readed=1)
+assertHttpCode GET 200 || exit 1
+
+## we are supposed to have 7 total posts
+assertEquals "NB of posts readed" $(echo $RESULT | jshon -l) 7 || exit 1
+

@@ -1,0 +1,4 @@
+./testCategory
+./testSub
+./testList
+./testPost

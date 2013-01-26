@@ -1,0 +1,34 @@
+#/bin/bash
+
+. testinit SUB
+
+################## subscribe to some new RSS
+RESULT=$(rest POST sub 'data={"url":"http://www.delicieuse-musique.com/rss"}')
+assertHttpCode POST 201 || exit 1
+
+## the title shoule be
+assertEquals "Title" "$(echo $RESULT | jshon -e title -u )" "Delicieuse Musique" || exit 1
+# and priority should be
+assertEquals "Priority" "$(echo $RESULT | jshon -e priority -u )" "10" || exit 1
+
+# save the subscriptionId
+SUB_ID=$(echo $RESULT | jshon -e subscriptionId -u )
+
+################## update url, title or priority of that subscription
+RESULT=$(rest PUT sub 'data={"subscriptionId":"'$SUB_ID'","url":"foo", "priority":"8", "title":"Delicieuse"}')
+assertHttpCode POST 200 || exit 1
+
+## it should return this URL
+assertEquals "URL" "$(echo $RESULT | jshon -e url -u )" "foo" || exit 1
+## the title should be
+assertEquals "Title" "$(echo $RESULT | jshon -e title -u )" "Delicieuse" || exit 1
+# and priority should be
+assertEquals "Priority" "$(echo $RESULT | jshon -e priority -u )" "8" || exit 1
+
+
+
+################## delete that subscription
+RESULT=$(rest DELETE sub 'data={"subscriptionId":"'$FEED_ID'"}')
+assertHttpCode POST 200 || exit 1
+
+
