@@ -28,7 +28,7 @@ assertEquals "Priority" "$(echo $RESULT | jshon -e priority -u )" "8" || exit 1
 
 
 ################## delete that subscription
-RESULT=$(rest DELETE sub 'data={"subscriptionId":"'$FEED_ID'"}')
+RESULT=$(rest DELETE sub 'data={"subscriptionId":"'$SUB_ID'"}')
 assertHttpCode POST 200 || exit 1
 
 

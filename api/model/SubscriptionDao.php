@@ -96,6 +96,30 @@ class SubscriptionDao extends DefaultDao {
 		return $sub;
 	}
 
+	public function delete($sub) {
+		$req = 'delete from subscription
+		where
+			userId = :userId
+			and subscriptionId = :subscriptionId';
+
+
+		$pstmt = $this->getDbh()->prepare($req);
+		$pstmt->bindValue(":userId", $sub->userId);
+		$pstmt->bindValue(":subscriptionId", $sub->subscriptionId);
+
+		if (!$pstmt->execute()) {
+			throw new Exception("Error during SQL execution");
+		}
+		
+		if ($pstmt->rowCount() != 1) {
+			throw new Exception("ERROR ! lines affected : $pstmt->rowCount() but should be 1");
+		}
+		
+		$pstmt->closeCursor();
+
+		return $sub;
+	}
+
 }
 
 ?>

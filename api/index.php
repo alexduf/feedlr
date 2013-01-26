@@ -1,7 +1,7 @@
 <?php
 
 include_once 'include/RestHandler.php';
-include_once '../config.php';
+include_once 'config.php';
 include_once 'model/UserDao.php';
 
 $resources = Array("category" => "CategoryController", "sub" => "SubscriptionController", "post" => "PostController", "list" => "ListController");

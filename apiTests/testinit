@@ -2,7 +2,7 @@
 
 # to be sourced by other tests
 
-export FEEDLR_URL=http://localhost/feedlr.org/api/index.php?resource=
+export FEEDLR_URL=http://localhost/api/index.php?resource=
 export AUTH="Authorization: Basic dGVzdDp0ZXN0"
 export DB_USER=feedlr
 export DB_PASSWORD=feedlr

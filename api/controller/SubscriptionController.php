@@ -92,6 +92,21 @@ class SubscriptionController extends DefaultController {
 	}
 
 	public function delete($request, $response) {
+		$sub = $request->data;
+		
+		if (!empty($sub->subscriptionId)) {
+
+			$userId = $request->user->userId;
+			$sub->userId = $userId;
+
+			$subDao = new SubscriptionDao();
+			$subDao->delete($sub);
+
+			$response->httpCode = 200;
+		} else {
+			$response->httpCode = 400;
+			error_log("subscriptionId = $sub->subscriptionId");
+		}
 		return $response;
 	}
 
