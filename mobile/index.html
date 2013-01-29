@@ -4,10 +4,11 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width">
    <script type="text/javascript" src="js/install.js"></script>
-   <script type="text/javascript" src="js/feedlr-api.js"></script>
+   <script type="text/javascript" src="js/jquery.min.js"></script>
    <script type="text/javascript" src="js/feedlr.js"></script>
    <link rel="stylesheet" type="text/css" href="style/feedlr.css">
    <link rel="stylesheet" type="text/css" href="style/headers.css">
+   <link rel="stylesheet" type="text/css" href="style/lists.css">
    <title>Feedlr</title>
 </head>
 <body>
@@ -15,11 +16,10 @@
    <section role="region">
 		<header>
 			<button><span class="icon icon-menu">menu</span></button>
-			<menu type="toolbar">
-				<button><span class="icon icon-add">add</span></button>
-			</menu>
 			<h1>Feedlr <em>(2)</em></h1>
 		</header>
+		<ul id="postsUL">
+		</ul>
 	</section>
 
 </body>
